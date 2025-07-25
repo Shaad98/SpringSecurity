@@ -1,16 +1,21 @@
 package com.example.demo.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 // import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+// import org.springframework.security.core.userdetails.User;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+// import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 // Class that manage beans
@@ -18,6 +23,10 @@ import org.springframework.security.web.SecurityFilterChain;
 // All default config will neglected . Our provided config only considered
 @EnableWebSecurity
 public class SecurityConfig {
+
+    // We have to define impl for below class
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
@@ -39,25 +48,38 @@ public class SecurityConfig {
 
     // UsernamePasswordAutheticationFilter responsible for take username and password and to verify we have UserDetailsService 
 
-    // UserDetailsService by default use but i want to customize it 
+    // UserDetailsService  default config use but i want to customize it 
 
-    @Bean
-    public UserDetailsService userDetailsService(){
-        // Now your properties file username and password will not work
-        UserDetails user1 = User
-                                .withDefaultPasswordEncoder()
-                                .username("Shankar")
-                                .password("s@123")
-                                .roles("USER")
-                                .build();
+    // @Bean
+    // public UserDetailsService userDetailsService(){
+    //     // Now your properties file username and password will not work
+    //     UserDetails user1 = User
+    //                             .withDefaultPasswordEncoder()
+    //                             .username("Shankar")
+    //                             .password("s@123")
+    //                             .roles("USER")
+    //                             .build();
         
-        UserDetails user2 = User
-                                .withDefaultPasswordEncoder()
-                                .username("Alex")
-                                .password("a@123")
-                                .roles("USER")
-                                .build();
-        return new InMemoryUserDetailsManager(user1,user2);
+    //     UserDetails user2 = User
+    //                             .withDefaultPasswordEncoder()
+    //                             .username("Alex")
+    //                             .password("a@123")
+    //                             .roles("USER")
+    //                             .build();
+    //     return new InMemoryUserDetailsManager(user1,user2);
+    // }
+
+    // Authentication provider take  unautheticated means provided obj  and make authenticated if valid credential are provided
+    // Now i want to use mine authentication provider which connect to db
+
+    // there are multiple authetication provider one is for db
+    @Bean
+    public AuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        // There is no password encoder it's default text
+        provider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
     }
 
 }
