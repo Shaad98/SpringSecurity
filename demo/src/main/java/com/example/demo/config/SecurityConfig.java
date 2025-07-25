@@ -6,6 +6,7 @@ import org.springframework.security.config.Customizer;
 // import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 // Class that manage beans
@@ -25,6 +26,10 @@ public class SecurityConfig {
         // only above line give form if you access ,  by postman you get html page for rest api access do below thing
                     .httpBasic(Customizer.withDefaults())
         // logout url still work 
+        // diff ways to handle csrf is you make http stateless , but problem is you cannot login from browser every time form comes bcz of new request , new session means login once more with postman you can easily handle
+
+        // so comment to form login http basic come to browser like postman each req give credential and access
+                    .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .build();
     }
 }
