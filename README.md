@@ -19,5 +19,5 @@
 2.In application file UsernamePaswordAutheticationFilter check you define username and password or not if not it provide to console.
 3.Where you want to do Post,Put,Delete req from there first get csrf (if postman then postman,if browser then browser (It's IMP))
 
-
+#### 3.Creating configuration class and storing multiple username and password in memory manually
 
